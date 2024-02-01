@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 using OpenTK.Graphics.OpenGL4;
-using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
@@ -22,7 +21,7 @@ namespace UnconvGalRW
     public abstract class AbstractRenderObj : IRenderObject
     {
         
-        public int TextureId { get; protected set; }
+         public abstract int TextureId { get; protected set; }
 
         public float[] _vertices { get; set ; }
         public Vector3 _position { get;set; }
@@ -34,26 +33,25 @@ namespace UnconvGalRW
             1, 2, 3
         };
 
-        private int _elementBufferObject;
+        protected int _elementBufferObject;
 
-        private int _vertexBufferObject;
+        protected int _vertexBufferObject;
 
-        private int _vertexArrayObject;
+        protected int _vertexArrayObject;
 
-        private Shader _shader;
+        protected Shader _shader;
 
-        private Texture _texture;
+        protected Texture _texture;
 
-        private Camera _camera;
+        protected Camera _camera;
         
 
-        protected AbstractRenderObj(float[] vertices,int textureId,Camera cam, Vector3 position, Vector3 rotation, Vector3 scale)
+        protected AbstractRenderObj(float[] vertices,Camera cam, Vector3 position, Vector3 rotation, Vector3 scale)
         {
             _vertices = vertices;
             _position = position;
             _rotation = rotation;
             _scale = scale;
-            TextureId = textureId;
             _camera = cam;
 
             _vertexArrayObject = GL.GenVertexArray();
@@ -77,7 +75,7 @@ namespace UnconvGalRW
             var texCoordLocation = _shader.GetAttribLocation("aTexCoord");
             GL.EnableVertexAttribArray(texCoordLocation);
             GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
-            if (textureId < Directory.GetFiles("Data\\Textures").Length)
+            if (TextureId < Directory.GetFiles("Data\\Textures").Length)
                 _texture = Texture.LoadFromFile(Directory.GetFiles("Data\\Textures")[TextureId], TextureId);
             else
             {
@@ -101,10 +99,10 @@ namespace UnconvGalRW
                 }
 
             }
-            _texture.Use(TextureUnit.Texture0);
+            _texture?.Use(TextureUnit.Texture0);
         }
 
-        public void Render()
+       virtual public void Render()
         {
             GL.BindVertexArray(_vertexArrayObject);
 

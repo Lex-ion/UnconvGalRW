@@ -18,13 +18,25 @@ namespace UnconvGalRW
         public readonly int Handle;
         public int TextureID { get;private set; }
 
-        public static Texture LoadFromFile(string path,int id)
+        public static Texture LoadById(int id)
+        {
+            if (Textures.Any(t => t.TextureID == id))
+            {
+                return Textures[Textures.FindIndex(t => t.TextureID == id)];
+            }
+            throw new Exception("There is no Texture with ID: " + id);
+        }
+        public static Texture LoadFromFile(string? path,int id)
         {
             if (Textures.Any(t => t.TextureID==id))
             { 
-                return Textures[Textures.FindIndex(t => t.TextureID == id)];
+                return LoadById(id);
             }
             
+            if (path == null)
+            {
+                return Textures?.First();
+            }
 
             // Generate handle
             int handle = GL.GenTexture();

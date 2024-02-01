@@ -82,11 +82,11 @@ namespace UnconvGalRW
 },
                 0,
                 Camera,
-                new(),
+                new(0,5,0),
                 new(),
                 Vector3.One
                 ));
-
+            Objects.Add(new CompositeDisplayRenderObject("C:\\Users\\Killki\\Pictures\\Screenshots", Camera));
         }
 
 

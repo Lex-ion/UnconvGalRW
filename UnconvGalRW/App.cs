@@ -8,13 +8,13 @@ namespace UnconvGalRW
     {
         public bool IsRunning { get; protected set; }
 
-        protected Gallery Gallery;
+        protected Gallery? Gallery;
 
         public void Run(bool forceColdStartUp=false)
         {
             StartUp(forceColdStartUp);
 
-            Gallery.Run();
+            Gallery?.Run();
         }
 
 
@@ -56,7 +56,7 @@ namespace UnconvGalRW
             if (!IsRunning)
                 throw new Exception("Unable to stop nonexistant Gallery.");
             IsRunning = false;  
-            Gallery.Close();
+            Gallery?.Close();
         }
 
 
