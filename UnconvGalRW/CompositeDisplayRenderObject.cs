@@ -76,7 +76,7 @@ namespace UnconvGalRW
 
         string[] GetFiles()
         {
-            return Directory.GetFiles(ImageSourcePath).Where(f=>f.EndsWith(".png")).ToArray();
+            return Directory.GetFiles(ImageSourcePath, "*.png", SearchOption.AllDirectories).ToArray();
         }
 
         public void Render()

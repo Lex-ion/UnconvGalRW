@@ -63,8 +63,11 @@ namespace UnconvGalRW
 
         public void ChangeTexture(string texturePath)
         {
-            int id = Texture.Textures.Count;
+            int id = Texture.Textures.Count*-1;
             Texture newTexture = Texture.LoadFromFile(texturePath, Texture.Textures.Count);
+            GL.DeleteTexture(_texture.Handle);
+            if(_texture.TextureID<1)
+            Texture.Textures.Remove(_texture);
             _texture = newTexture;
 
         }
