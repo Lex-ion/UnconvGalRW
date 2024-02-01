@@ -38,6 +38,8 @@ namespace UnconvGalRW
                 return Textures?.First();
             }
 
+            
+            
             // Generate handle
             int handle = GL.GenTexture();
 

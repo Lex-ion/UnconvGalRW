@@ -41,14 +41,11 @@ namespace UnconvGalRW
             RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, backVerts, files[1 % files.Length], camera, new Vector3(), new Vector3(), Vector3.One));
             RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, leftVerts, files[3 % files.Length], camera, new Vector3(), new Vector3(), Vector3.One));
 
-
+            SetSectors();
         }
 
-        void TextureChange()
+        void SetSectors()
         {
-
-            bool[] lastSectors = new bool[2];
-            sectors.CopyTo(lastSectors, 0);
             sectors[0] = Camera.Position.X switch
             {
                 > 0 => true,
@@ -60,6 +57,15 @@ namespace UnconvGalRW
                 > 0 => true,
                 _ => false
             };
+        }
+
+        void TextureChange()
+        {
+
+            bool[] lastSectors = new bool[2];
+            sectors.CopyTo(lastSectors, 0);
+
+            SetSectors();
 
             if ((lastSectors[0] == sectors[0] && lastSectors[1] == sectors[1])||GetFiles().Length==0)
                 return;
@@ -81,6 +87,8 @@ namespace UnconvGalRW
 
         public void Render()
         {
+        // Action textureChange = TextureChange;
+        // Task.Run(textureChange);
             TextureChange();
 
             foreach (IRenderObject renderObj in RenderObjs)
