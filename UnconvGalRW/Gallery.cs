@@ -181,5 +181,19 @@ namespace UnconvGalRW
             else if(direction.Length>0)
                 Camera.Position += Vector3.Normalize(direction) * cameraSpeed;
         }
+
+        protected override void OnResize(ResizeEventArgs e)
+        {
+            base.OnResize(e);
+
+            GL.Viewport(0, 0, Size.X, Size.Y);
+            Camera.AspectRatio = Size.X / (float)Size.Y;
+        }
+        protected override void OnMouseWheel(MouseWheelEventArgs e)
+        {
+            base.OnMouseWheel(e);
+
+            Camera.Fov -= e.OffsetY * 4;
+        }
     }
 }
