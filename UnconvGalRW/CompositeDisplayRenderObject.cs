@@ -24,6 +24,8 @@ namespace UnconvGalRW
         string ImageSourcePath { get; set; }
         bool[] sectors = new bool[2]; //true - positive
 
+        string[] files;
+
         public CompositeDisplayRenderObject(string imagesSource,Camera camera)
         {
             ImageSourcePath = imagesSource;
@@ -33,7 +35,10 @@ namespace UnconvGalRW
             _rotation = new Vector3();
             _scale = new Vector3();
 
-            string[] files = GetFiles();
+             GetFiles();
+
+            Random r = new Random();
+            files=files.OrderBy(d=>r.Next()).ToArray();
 
 
             RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, frontVerts, files[0%files.Length] , camera, new Vector3(), new Vector3(), Vector3.One));
@@ -70,11 +75,10 @@ namespace UnconvGalRW
 
             SetSectors();
 
-            if ((lastSectors[0] == sectors[0] && lastSectors[1] == sectors[1])||GetFiles().Length==0)
+            if ((lastSectors[0] == sectors[0] && lastSectors[1] == sectors[1])||files.Length==0)
                 return;
             
 
-            string[] files = GetFiles();
 
             int faceId;
 
@@ -123,9 +127,9 @@ namespace UnconvGalRW
         }
 
 
-        string[] GetFiles()
+        void GetFiles()
         {
-            return Directory.GetFiles(ImageSourcePath, "*.png", SearchOption.AllDirectories).ToArray();
+            files= Directory.GetFiles(ImageSourcePath, "*.png", SearchOption.AllDirectories).ToArray();
         }
 
         public void Render()
