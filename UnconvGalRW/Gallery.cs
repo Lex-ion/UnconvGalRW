@@ -115,7 +115,7 @@ namespace UnconvGalRW
             KeyboardContorol(args);
         }
 
-        const float cameraSpeed = 1.5f;
+        const float cameraSpeed = .025f;
         const float sensitivity = 0.2f;
         private bool _firstMove = true;
         private Vector2 _lastPos;
@@ -145,35 +145,41 @@ namespace UnconvGalRW
         {
             var input = KeyboardState;
 
+            Vector3 direction = new();
+
             if (input.IsKeyDown(Keys.W))
             {
-                Camera.Position += Vector3.Normalize(Vector3.Cross(Vector3.UnitY, Camera.Right)) * cameraSpeed * (float)e.Time; // Forward
+               direction += Vector3.Normalize(Vector3.Cross(Vector3.UnitY, Camera.Right)) * 1 * (float)e.Time; // Forward
             }
 
             if (input.IsKeyDown(Keys.S))
             {
-                Camera.Position -= Vector3.Normalize(Vector3.Cross(Vector3.UnitY, Camera.Right)) * cameraSpeed * (float)e.Time; // Backwards
+                direction-= Vector3.Normalize(Vector3.Cross(Vector3.UnitY, Camera.Right)) * 1 * (float)e.Time; // Backwards
             }
             if (input.IsKeyDown(Keys.A))
             {
-                Camera.Position -= Camera.Right * cameraSpeed * (float)e.Time; // Left
+                direction-= Camera.Right * 1 * (float)e.Time; // Left
             }
             if (input.IsKeyDown(Keys.D))
             {
-                Camera.Position += Camera.Right * cameraSpeed * (float)e.Time; // Right
+                direction+= Camera.Right * 1 * (float)e.Time; // Right
             }
             if (input.IsKeyDown(Keys.Space))
             {
-                Camera.Position += Vector3.UnitY * cameraSpeed * (float)e.Time; // Up
+                direction+= Vector3.UnitY * 1 * (float)e.Time; // Up
             }
             if (input.IsKeyDown(Keys.LeftShift))
             {
-                Camera.Position -= Vector3.UnitY * cameraSpeed * (float)e.Time; // Down
-            }
+                direction-= Vector3.UnitY * 1 * (float)e.Time; // Down
+            }            
             if (input.IsKeyDown(Keys.Escape))
             {
                 Close();
             }
+            if(direction.Length>0&&input.IsKeyDown(Keys.Q))
+            Camera.Position += Vector3.Normalize(direction) * cameraSpeed*2;
+            else if(direction.Length>0)
+                Camera.Position += Vector3.Normalize(direction) * cameraSpeed;
         }
     }
 }
