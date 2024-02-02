@@ -129,7 +129,10 @@ namespace UnconvGalRW
 
         void GetFiles()
         {
-            files= Directory.GetFiles(ImageSourcePath, "*.png", SearchOption.AllDirectories).ToArray();
+            if (!ImageSourcePath.EndsWith(".png"))
+                files = Directory.GetFiles(ImageSourcePath, "*.png", SearchOption.AllDirectories).ToArray();
+            else
+                files = new string[] { ImageSourcePath };
         }
 
         public void Render()
