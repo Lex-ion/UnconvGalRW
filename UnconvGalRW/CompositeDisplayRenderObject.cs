@@ -5,6 +5,8 @@ namespace UnconvGalRW
     public class CompositeDisplayRenderObject : IRenderObject
     {
 
+        public static string ImageSourcePath = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+
         List<DisplayPartRenderObject> RenderObjs = new();
 
         public float[] _vertices { get; set; }
@@ -21,14 +23,12 @@ namespace UnconvGalRW
         Camera Camera;
         int index;
 
-        string ImageSourcePath { get; set; }
         bool[] sectors = new bool[2]; //true - positive
 
         string[] files;
 
-        public CompositeDisplayRenderObject(string imagesSource,Camera camera)
+        public CompositeDisplayRenderObject(Camera camera)
         {
-            ImageSourcePath = imagesSource;
             Camera = camera;
             _vertices = new float[0];
             _position = new Vector3();

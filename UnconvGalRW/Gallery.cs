@@ -86,7 +86,7 @@ namespace UnconvGalRW
                 new(),
                 Vector3.One
                 ));
-            Objects.Add(new CompositeDisplayRenderObject(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), Camera));
+            Objects.Add(new CompositeDisplayRenderObject(Camera));
         }
 
 
