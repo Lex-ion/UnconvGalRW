@@ -121,8 +121,8 @@
   <data name="fragShader" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\shaders\fragshader.frag;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="no_texture_dog" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\imgs\no_texture_dog.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="NOTEXTURE_dog" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\imgs\notexture_dog.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="vertShader" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\shaders\vertshader.vert;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>

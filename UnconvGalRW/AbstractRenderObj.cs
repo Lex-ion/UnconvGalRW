@@ -78,27 +78,8 @@ namespace UnconvGalRW
             if (TextureId < Directory.GetFiles("Data\\Textures").Length)
                 _texture = Texture.LoadFromFile(Directory.GetFiles("Data\\Textures")[TextureId], TextureId);
             else
-            {
-                ResourceManager MyResourceClass = new ResourceManager(typeof(Properties.Resources));
-
-                ResourceSet resourceSet = MyResourceClass.GetResourceSet(CultureInfo.CurrentUICulture, true, true);
-
-                foreach (DictionaryEntry entry in resourceSet)
-                {
-                    string resourceKey = entry.Key.ToString();
-                    object resource = entry.Value;
-
-
-                    if (resourceKey.Contains("texture"))
-                    {
-                        File.WriteAllBytes($"Data\\Textures\\NOTEXTURE.png", (byte[])resource);
-                        _texture =Texture.LoadFromFile("Data\\Textures\\NOTEXTURE.png", TextureId);
-                        break;
-                    }
-
-                }
-
-            }
+                _texture = Texture.GenerateMissingTexture();
+           
             _texture?.Use(TextureUnit.Texture0);
         }
 

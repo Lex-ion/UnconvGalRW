@@ -73,9 +73,9 @@ namespace UnconvGalRW.Properties {
         /// <summary>
         ///   Vyhledává lokalizovaný prostředek typu System.Byte[].
         /// </summary>
-        public static byte[] no_texture_dog {
+        public static byte[] NOTEXTURE_dog {
             get {
-                object obj = ResourceManager.GetObject("no_texture_dog", resourceCulture);
+                object obj = ResourceManager.GetObject("NOTEXTURE_dog", resourceCulture);
                 return ((byte[])(obj));
             }
         }

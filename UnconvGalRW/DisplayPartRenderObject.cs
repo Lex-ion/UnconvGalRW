@@ -30,6 +30,14 @@ namespace UnconvGalRW
             _texture = Texture.LoadFromFile(texturePath, Texture.Textures.Count);
         }
 
+        public DisplayPartRenderObject(ref float[] parentPosition, ref float[] parentRotation, ref float[] parentScale, float[] vertices, int textureId, Camera cam, Vector3 position, Vector3 rotation, Vector3 scale) : base(vertices, cam, position, rotation, scale)
+        {
+            _pos = parentPosition;
+            _rot = parentRotation;
+            _scl = parentScale;
+            _texture = Texture.LoadById(textureId);
+        }
+
         public override void Render()
         {
             GL.BindVertexArray(_vertexArrayObject);

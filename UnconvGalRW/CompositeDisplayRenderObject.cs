@@ -37,9 +37,12 @@ namespace UnconvGalRW
 
 
             RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, frontVerts, files[0%files.Length] , camera, new Vector3(), new Vector3(), Vector3.One));
-            RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, rightVerts, files[2 % files.Length], camera, new Vector3(), new Vector3(), Vector3.One));
+            RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, rightVerts, files[3 % files.Length], camera, new Vector3(), new Vector3(), Vector3.One));
             RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, backVerts, files[1 % files.Length], camera, new Vector3(), new Vector3(), Vector3.One));
-            RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, leftVerts, files[3 % files.Length], camera, new Vector3(), new Vector3(), Vector3.One));
+            RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, leftVerts, files[2 % files.Length], camera, new Vector3(), new Vector3(), Vector3.One));
+            RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, topVerts, 0, camera, new Vector3(), new Vector3(), Vector3.One));
+            RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, botVerts, 0, camera, new Vector3(), new Vector3(), Vector3.One));
+
 
             SetSectors();
         }
@@ -69,16 +72,56 @@ namespace UnconvGalRW
 
             if ((lastSectors[0] == sectors[0] && lastSectors[1] == sectors[1])||GetFiles().Length==0)
                 return;
-            index++;
+            
 
             string[] files = GetFiles();
-            for (int i = 0; i < RenderObjs.Count; i++)
-            {
-                RenderObjs[i].ChangeTexture(files[(index + i) % files.Length]);
-            }
 
+            int faceId;
+
+            if (lastSectors[0] == sectors[0])
+            {
+                if (!sectors[0])
+                {
+                    index += sectors[1] ? +1 : -1;
+                    Console.WriteLine("Changing right");
+                    Console.WriteLine(index);
+                    faceId = 1;
+                }
+                else
+                {
+                    index += sectors[1] ? -1 : +1;
+                    Console.WriteLine("Changing left");
+                    Console.WriteLine(index);
+                    faceId = 3;
+                }
+            }
+            else
+            {
+                if (sectors[1])
+                {
+                    index += sectors[0] ? +1 : -1;
+                    Console.WriteLine("Changing back");
+                    Console.WriteLine(index);
+                    faceId=2;
+                }else
+                {
+                    index += sectors[0] ? -1 : +1;
+                    Console.WriteLine("Changing front");
+                    Console.WriteLine(index);
+                    faceId = 0;
+                }
+            }
+            index = index < 0 ? files.Length-1 : index;
+            index %= files.Length;
+            Console.WriteLine(index);
+            // for (int i = 0; i < RenderObjs.Count; i++)
+            // {
+            //     RenderObjs[i].ChangeTexture(files[(index + i) % files.Length]);
+            // }
+            RenderObjs[faceId].ChangeTexture(files[index]);
 
         }
+
 
         string[] GetFiles()
         {

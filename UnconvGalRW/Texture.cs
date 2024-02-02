@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Resources;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,8 +27,40 @@ namespace UnconvGalRW
             {
                 return Textures[Textures.FindIndex(t => t.TextureID == id)];
             }
+            return GenerateMissingTexture();
             throw new Exception("There is no Texture with ID: " + id);
         }
+
+        public static Texture GenerateMissingTexture()
+        {
+
+            if (Textures.Any(t => t.TextureID == -1))
+            {
+                return Textures[Textures.FindIndex(t => t.TextureID == -1)];
+            }
+
+            Texture? _texture =null;
+            ResourceManager MyResourceClass = new ResourceManager(typeof(Properties.Resources));
+
+            ResourceSet resourceSet = MyResourceClass.GetResourceSet(CultureInfo.CurrentUICulture, true, true);
+
+            foreach (DictionaryEntry entry in resourceSet)
+            {
+                string resourceKey = entry.Key.ToString();
+                object resource = entry.Value;
+
+
+                if (resourceKey.Contains("NOTEXTURE"))
+                {
+                    File.WriteAllBytes($"Data\\Textures\\NOTEXTURE.png", (byte[])resource);
+                    _texture = Texture.LoadFromFile("Data\\Textures\\NOTEXTURE.png", -1);
+                    break;
+                }
+
+            }
+            return _texture;
+        }
+
         public static Texture LoadFromFile(string? path,int id)
         {
             if (Textures.Any(t => t.TextureID==id))
@@ -35,7 +70,7 @@ namespace UnconvGalRW
             
             if (path == null)
             {
-                return Textures?.First();
+                return GenerateMissingTexture();
             }
 
             
