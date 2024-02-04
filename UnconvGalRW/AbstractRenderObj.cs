@@ -76,7 +76,7 @@ namespace UnconvGalRW
             GL.EnableVertexAttribArray(texCoordLocation);
             GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
             if (TextureId < Directory.GetFiles("Data\\Textures").Length)
-                _texture = Texture.LoadFromFile(Directory.GetFiles("Data\\Textures")[TextureId], TextureId);
+                _texture = Texture.GetTexture(Directory.GetFiles("Data\\Textures")[TextureId]);
             else
                 _texture = Texture.GenerateMissingTexture();
            

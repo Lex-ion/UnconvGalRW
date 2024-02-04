@@ -27,7 +27,7 @@ namespace UnconvGalRW
             _pos =  parentPosition;
             _rot = parentRotation;
             _scl = parentScale;
-            _texture = Texture.LoadFromFile(texturePath, Texture.Textures.Count);
+            _texture = Texture.CreteTemporaryFromFile(texturePath);
         }
 
         public DisplayPartRenderObject(ref float[] parentPosition, ref float[] parentRotation, ref float[] parentScale, float[] vertices, int textureId, Camera cam, Vector3 position, Vector3 rotation, Vector3 scale) : base(vertices, cam, position, rotation, scale)
@@ -35,7 +35,7 @@ namespace UnconvGalRW
             _pos = parentPosition;
             _rot = parentRotation;
             _scl = parentScale;
-            _texture = Texture.LoadById(textureId);
+            _texture = Texture.GetTexture(textureId);
         }
 
         public override void Render()
@@ -71,11 +71,8 @@ namespace UnconvGalRW
 
         public void ChangeTexture(string texturePath)
         {
-            int id = Texture.Textures.Count*-1;
-            Texture newTexture = Texture.LoadFromFile(texturePath, Texture.Textures.Count);
+            Texture newTexture = Texture.CreteTemporaryFromFile(texturePath);
             GL.DeleteTexture(_texture.Handle);
-            if(_texture.TextureID<1)
-            Texture.Textures.Remove(_texture);
             _texture = newTexture;
 
         }
