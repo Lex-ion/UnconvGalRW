@@ -16,30 +16,56 @@ namespace UnconvGalRW
 {
     public class Texture
     {
-        public static  List<Texture> Textures= new List<Texture>();
+        public static  Dictionary<int,Texture> Textures= new();
 
         public readonly int Handle;
         public int TextureID { get;private set; }
 
-        public static Texture LoadById(int id)
+        public static Texture GetTexture(int id)
         {
-            if (Textures.Any(t => t.TextureID == id))
+            if (Textures.ContainsKey(id))
             {
-                return Textures[Textures.FindIndex(t => t.TextureID == id)];
+                return LoadById(id);
+            }
+            else
+                return GenerateMissingTexture();
+        }
+        public static Texture GetTexture(string? path)
+        {
+
+            if (path == null || !File.Exists(path))
+            {
+                return GenerateMissingTexture();
+            }
+            int pathHash = path.GetHashCode();
+
+            if (Textures.ContainsKey(pathHash))
+            {
+                return LoadById(pathHash);
+            }
+            else
+               return LoadFromFile(path);
+        }
+
+         static Texture LoadById(int id)
+        {
+            if (Textures.ContainsKey(id))
+            {
+                return Textures[id];
             }
             return GenerateMissingTexture();
             throw new Exception("There is no Texture with ID: " + id);
         }
 
-        public static Texture GenerateMissingTexture()
+        public  static Texture GenerateMissingTexture()
         {
 
-            if (Textures.Any(t => t.TextureID == -1))
+            if (Textures.ContainsKey(-1))
             {
-                return Textures[Textures.FindIndex(t => t.TextureID == -1)];
+                return Textures[-1];
             }
 
-            Texture? _texture =null;
+            int handle=0;
             ResourceManager MyResourceClass = new ResourceManager(typeof(Properties.Resources));
 
             ResourceSet resourceSet = MyResourceClass.GetResourceSet(CultureInfo.CurrentUICulture, true, true);
@@ -53,28 +79,43 @@ namespace UnconvGalRW
                 if (resourceKey.Contains("NOTEXTURE"))
                 {
                     File.WriteAllBytes($"Data\\Textures\\NOTEXTURE.png", (byte[])resource);
-                    _texture = Texture.LoadFromFile("Data\\Textures\\NOTEXTURE.png", -1);
+                    handle = CreateTexture("Data\\Textures\\NOTEXTURE.png");
                     break;
                 }
 
             }
-            return _texture;
+            return new Texture(handle,-1);
         }
 
-        public static Texture LoadFromFile(string? path,int id)
+        public static Texture CreteTemporaryFromFile(string? path)
         {
-            if (Textures.Any(t => t.TextureID==id))
-            { 
-                return LoadById(id);
-            }
-            
             if (path == null)
             {
                 return GenerateMissingTexture();
             }
 
-            
-            
+            int handle = CreateTexture(path);
+
+
+            return new Texture(handle, -1);
+        }
+
+         static Texture LoadFromFile(string? path)
+        {
+
+            int pathHash = path.GetHashCode();
+
+
+            int handle = CreateTexture(path);
+
+            Textures.Add(pathHash,new Texture(handle, pathHash));
+
+            return Textures[pathHash];
+        }
+
+        static int CreateTexture(string path)
+        {
+
             // Generate handle
             int handle = GL.GenTexture();
 
@@ -130,11 +171,7 @@ namespace UnconvGalRW
             // Here you can see and read about the morié effect https://en.wikipedia.org/wiki/Moir%C3%A9_pattern
             // Here is an example of mips in action https://en.wikipedia.org/wiki/File:Mipmap_Aliasing_Comparison.png
             GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
-
-
-            Textures.Add(new Texture(handle, id));
-
-            return Textures.Last();
+            return handle;
         }
 
         public Texture(int glHandle,int textureID)
