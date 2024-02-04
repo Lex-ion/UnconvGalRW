@@ -38,18 +38,15 @@ namespace UnconvGalRW
             _rotation = new Vector3();
             _scale = new Vector3();
 
-             GetFiles();
+            files = GetFiles();
 
             Random r = new Random();
             files=files.OrderBy(d=>r.Next()).ToArray();
 
-            if (files.Length == 0)
-                return;
-
-            RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, frontVerts, files[Mod(_index, files.Length)] , camera, new Vector3(), new Vector3(), Vector3.One));
-            RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, rightVerts, files[Mod(_index + 1, files.Length)], camera, new Vector3(), new Vector3(), Vector3.One));
-            RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, backVerts, files[0], camera, new Vector3(), new Vector3(), Vector3.One));
-            RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, leftVerts, files[Mod(_index - 1, files.Length)], camera, new Vector3(), new Vector3(), Vector3.One));
+            RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, frontVerts, GetFile(_index), camera, new Vector3(), new Vector3(), Vector3.One));
+            RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, rightVerts, GetFile(_index + 1), camera, new Vector3(), new Vector3(), Vector3.One));
+            RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, backVerts, null, camera, new Vector3(), new Vector3(), Vector3.One));
+            RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, leftVerts, GetFile(_index - 1), camera, new Vector3(), new Vector3(), Vector3.One));
             RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, topVerts, 0, camera, new Vector3(), new Vector3(), Vector3.One));
             RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, botVerts, 0, camera, new Vector3(), new Vector3(), Vector3.One));
         }
@@ -71,18 +68,26 @@ namespace UnconvGalRW
 
             // change the texture of the previous back face to the currently visible texture +-1.
             // this way we're always a step ahead of the player's movement, either way they go the texture will already be loaded
-            RenderObjs[_backFace].ChangeTexture(files[Mod(_index + difference, files.Length)]);
+            RenderObjs[_backFace].ChangeTexture(GetFile(_index + difference));
 
             _backFace = backFace;
         }
 
 
-        void GetFiles()
+        string[] GetFiles()
         {
-            if (!ImageSourcePath.EndsWith(".png"))
-                files = Directory.GetFiles(ImageSourcePath, "*.png", SearchOption.AllDirectories).ToArray();
-            else
-                files = new string[] { ImageSourcePath };
+            if (ImageSourcePath.EndsWith(".png"))
+                return new string[] { ImageSourcePath };
+
+            return Directory.GetFiles(ImageSourcePath, "*.png", SearchOption.AllDirectories);
+        }
+
+        string? GetFile(int index)
+        {
+            if (files.Length == 0)
+                return null;
+
+            return files.ElementAtOrDefault(Mod(index, files.Length));
         }
 
         public void Render()
