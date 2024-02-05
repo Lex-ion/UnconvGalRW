@@ -68,17 +68,17 @@ namespace UnconvGalRW
             int handle=0;
             ResourceManager MyResourceClass = new ResourceManager(typeof(Properties.Resources));
 
-            ResourceSet resourceSet = MyResourceClass.GetResourceSet(CultureInfo.CurrentUICulture, true, true);
+            ResourceSet? resourceSet = MyResourceClass.GetResourceSet(CultureInfo.CurrentUICulture, true, true);
 
-            foreach (DictionaryEntry entry in resourceSet)
+            foreach (DictionaryEntry entry in resourceSet!)
             {
-                string resourceKey = entry.Key.ToString();
-                object resource = entry.Value;
+                string? resourceKey = entry.Key.ToString();
+                object? resource = entry.Value;
 
 
-                if (resourceKey.Contains("NOTEXTURE"))
+                if (resourceKey!.Contains("NOTEXTURE"))
                 {
-                    File.WriteAllBytes($"Data\\Textures\\NOTEXTURE.png", (byte[])resource);
+                    File.WriteAllBytes($"Data\\Textures\\NOTEXTURE.png", (byte[])resource!);
                     handle = CreateTexture("Data\\Textures\\NOTEXTURE.png");
                     break;
                 }
@@ -100,13 +100,13 @@ namespace UnconvGalRW
             return new Texture(handle, -1);
         }
 
-         static Texture LoadFromFile(string? path)
+         static Texture LoadFromFile(string path)
         {
 
-            int pathHash = path.GetHashCode();
+            int pathHash = path?.GetHashCode()??-1;
 
 
-            int handle = CreateTexture(path);
+            int handle = CreateTexture(path!);
 
             Textures.Add(pathHash,new Texture(handle, pathHash));
 

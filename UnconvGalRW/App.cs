@@ -23,8 +23,10 @@ namespace UnconvGalRW
             if (!IntegrityState || forceColdStartUp)
                 ColdStartUp();
 
-            Gallery = new(1920,1080,"UGRW");
-            Gallery.UpdateFrequency = 180;
+            Gallery = new(1920, 1080, "UGRW")
+            {
+                UpdateFrequency = 180
+            };
         }
 
         void ColdStartUp()
@@ -34,18 +36,18 @@ namespace UnconvGalRW
             Directory.CreateDirectory("Data\\Shaders");
             ResourceManager MyResourceClass = new ResourceManager(typeof(Properties.Resources));
 
-            ResourceSet resourceSet = MyResourceClass.GetResourceSet(CultureInfo.CurrentUICulture, true, true);
+            ResourceSet? resourceSet = MyResourceClass.GetResourceSet(CultureInfo.CurrentUICulture, true, true);
 
-            foreach (DictionaryEntry entry in resourceSet)
+            foreach (DictionaryEntry entry in resourceSet!)
             {
-                string resourceKey = entry.Key.ToString();
-                object resource = entry.Value;
+                string? resourceKey = entry.Key.ToString();
+                object? resource = entry.Value;
 
 
 
-                if (resourceKey.Contains("Shader"))
+                if (resourceKey?.Contains("Shader")??false)
                 {
-                    File.WriteAllBytes($"Data\\Shaders/{resourceKey}.{resourceKey.Remove(4)}", (byte[])resource);
+                    File.WriteAllBytes($"Data\\Shaders/{resourceKey}.{resourceKey.Remove(4)}", (byte[])resource!);
                 }
 
             }

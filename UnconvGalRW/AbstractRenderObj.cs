@@ -41,7 +41,7 @@ namespace UnconvGalRW
 
         protected Shader _shader;
 
-        protected Texture _texture;
+        protected Texture? _texture;
 
         protected Camera _camera;
         
@@ -101,7 +101,7 @@ namespace UnconvGalRW
 
 
 
-            _texture.Use(TextureUnit.Texture0);
+            _texture?.Use(TextureUnit.Texture0);
             _shader.Use();
 
             GL.DrawArrays(PrimitiveType.Triangles, 0, _vertices.Length / 5);

@@ -14,7 +14,7 @@ namespace UnconvGalRW
         public override int TextureId { get; protected set; }
 
 
-        CompositeDisplayRenderObject Parent;
+       readonly CompositeDisplayRenderObject Parent;
 
 
         public DisplayPartRenderObject(CompositeDisplayRenderObject parent,float[] vertices, string? texturePath, Camera cam, Vector3 position, Vector3 rotation, Vector3 scale) : base(vertices, cam, position, rotation, scale)
@@ -54,7 +54,7 @@ namespace UnconvGalRW
 
 
 
-            _texture.Use(TextureUnit.Texture0);
+            _texture?.Use(TextureUnit.Texture0);
             _shader.Use();
 
             GL.DrawArrays(PrimitiveType.Triangles, 0, _vertices.Length / 5);
@@ -63,7 +63,7 @@ namespace UnconvGalRW
         public void ChangeTexture(string? texturePath)
         {
             Texture newTexture = Texture.CreteTemporaryFromFile(texturePath);
-            GL.DeleteTexture(_texture.Handle);
+            GL.DeleteTexture(_texture!.Handle);
             _texture = newTexture;
 
         }

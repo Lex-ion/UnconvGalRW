@@ -1,27 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using System.ComponentModel;
-using System.Diagnostics;
 
 namespace UnconvGalRW
 {
-    public class Gallery:GameWindow
+    public class Gallery : GameWindow
     {
 
         protected List<IRenderObject> Objects = new();
 
-        protected Camera Camera;
+        protected Camera? Camera;
 
-        public Gallery(int width, int height, string title) : base(GameWindowSettings.Default, new NativeWindowSettings() { Size = (width, height), Title = title })
+        public Gallery(int width, int height, string title) : base(GameWindowSettings.Default, new NativeWindowSettings() { ClientSize = (width, height), Title = title })
         {
         }
 
@@ -34,7 +27,7 @@ namespace UnconvGalRW
             GL.ClearColor(0.45f, 0.75f, 0.9f, 1.0f);
             GL.Enable(EnableCap.DepthTest);
 
-            Camera= new Camera(Vector3.UnitZ * 3, Size.X / (float)Size.Y);
+            Camera = new Camera(Vector3.UnitZ * 3, Size.X / (float)Size.Y);
 
             Objects.Add(new SimpleObject(
                 new float[] {
@@ -82,7 +75,7 @@ namespace UnconvGalRW
 },
                 0,
                 Camera,
-                new(0,5,0),
+                new(0, 5, 0),
                 new(),
                 Vector3.One
                 ));
@@ -105,8 +98,10 @@ namespace UnconvGalRW
         {
             base.OnUpdateFrame(args);
 
-            if (IsFocused)
-                Controls(args);
+            if (!IsFocused)
+                return;
+
+            Controls(args);
         }
 
         void Controls(FrameEventArgs args)
@@ -136,7 +131,7 @@ namespace UnconvGalRW
                 _lastPos = new Vector2(mouse.X, mouse.Y);
 
                 // Apply the camera pitch and yaw (we clamp the pitch in the camera class)
-                Camera.Yaw += deltaX * sensitivity;
+                Camera!.Yaw += deltaX * sensitivity;
                 Camera.Pitch -= deltaY * sensitivity; // Reversed since y-coordinates range from bottom to top
             }
         }
@@ -149,37 +144,37 @@ namespace UnconvGalRW
 
             if (input.IsKeyDown(Keys.W))
             {
-               direction += Vector3.Normalize(Vector3.Cross(Vector3.UnitY, Camera.Right)) * 1 * (float)e.Time; // Forward
+                direction += Vector3.Normalize(Vector3.Cross(Vector3.UnitY, Camera!.Right)) * (float)e.Time; // Forward
             }
 
             if (input.IsKeyDown(Keys.S))
             {
-                direction-= Vector3.Normalize(Vector3.Cross(Vector3.UnitY, Camera.Right)) * 1 * (float)e.Time; // Backwards
+                direction -= Vector3.Normalize(Vector3.Cross(Vector3.UnitY, Camera!.Right)) * (float)e.Time; // Backwards
             }
             if (input.IsKeyDown(Keys.A))
             {
-                direction-= Camera.Right * 1 * (float)e.Time; // Left
+                direction -= Camera!.Right * (float)e.Time; // Left
             }
             if (input.IsKeyDown(Keys.D))
             {
-                direction+= Camera.Right * 1 * (float)e.Time; // Right
+                direction += Camera!.Right * (float)e.Time; // Right
             }
             if (input.IsKeyDown(Keys.Space))
             {
-                direction+= Vector3.UnitY * 1 * (float)e.Time; // Up
+                direction += Vector3.UnitY * (float)e.Time; // Up
             }
             if (input.IsKeyDown(Keys.LeftShift))
             {
-                direction-= Vector3.UnitY * 1 * (float)e.Time; // Down
-            }            
+                direction -= Vector3.UnitY * (float)e.Time; // Down
+            }
             if (input.IsKeyDown(Keys.Escape))
             {
                 Close();
             }
-            if(direction.Length>0&&input.IsKeyDown(Keys.Q))
-            Camera.Position += Vector3.Normalize(direction) * cameraSpeed*2;
-            else if(direction.Length>0)
-                Camera.Position += Vector3.Normalize(direction) * cameraSpeed;
+            if (direction.Length > 0 && input.IsKeyDown(Keys.Q))
+                Camera!.Position += Vector3.Normalize(direction) * cameraSpeed * 2;
+            else if (direction.Length > 0)
+                Camera!.Position += Vector3.Normalize(direction) * cameraSpeed;
         }
 
         protected override void OnResize(ResizeEventArgs e)
@@ -187,13 +182,13 @@ namespace UnconvGalRW
             base.OnResize(e);
 
             GL.Viewport(0, 0, Size.X, Size.Y);
-            Camera.AspectRatio = Size.X / (float)Size.Y;
+            Camera!.AspectRatio = Size.X / (float)Size.Y;
         }
         protected override void OnMouseWheel(MouseWheelEventArgs e)
         {
             base.OnMouseWheel(e);
 
-            Camera.Fov -= e.OffsetY * 4;
+            Camera!.Fov -= e.OffsetY * 4;
         }
     }
 }
