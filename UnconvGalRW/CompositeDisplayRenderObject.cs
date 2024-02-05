@@ -21,11 +21,14 @@ namespace UnconvGalRW
         float[] _scl = new float[3];
 
         Camera Camera;
-        int index;
-
-        bool[] sectors = new bool[2]; //true - positive
 
         string[] files;
+
+        // the texture index of the front face
+        private int _index = 0;
+
+        // the id of the opposite face (furthest away from the camera)
+        private int _backFace = 0;
 
         public CompositeDisplayRenderObject(Camera camera)
         {
@@ -35,111 +38,64 @@ namespace UnconvGalRW
             _rotation = new Vector3();
             _scale = new Vector3();
 
-             GetFiles();
+            files = GetFiles();
 
             Random r = new Random();
             files=files.OrderBy(d=>r.Next()).ToArray();
 
-
-            RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, frontVerts, files[0%files.Length] , camera, new Vector3(), new Vector3(), Vector3.One));
-            RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, rightVerts, files[3 % files.Length], camera, new Vector3(), new Vector3(), Vector3.One));
-            RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, backVerts, files[1 % files.Length], camera, new Vector3(), new Vector3(), Vector3.One));
-            RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, leftVerts, files[2 % files.Length], camera, new Vector3(), new Vector3(), Vector3.One));
+            RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, frontVerts, GetFile(_index), camera, new Vector3(), new Vector3(), Vector3.One));
+            RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, rightVerts, GetFile(_index + 1), camera, new Vector3(), new Vector3(), Vector3.One));
+            RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, backVerts, null, camera, new Vector3(), new Vector3(), Vector3.One));
+            RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, leftVerts, GetFile(_index - 1), camera, new Vector3(), new Vector3(), Vector3.One));
             RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, topVerts, 0, camera, new Vector3(), new Vector3(), Vector3.One));
             RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, botVerts, 0, camera, new Vector3(), new Vector3(), Vector3.One));
-
-
-            SetSectors();
-        }
-
-        void SetSectors()
-        {
-            sectors[0] = Camera.Position.X switch
-            {
-                > 0 => true,
-                _ => false
-            };
-
-            sectors[1] = Camera.Position.Z switch
-            {
-                > 0 => true,
-                _ => false
-            };
         }
 
         void TextureChange()
         {
+            // use the camera's position to determine which face is in the back (and should be updated upon player movement)
+            double angle = Math.Atan2(Camera.Position.Z, -Camera.Position.X) * (180 / Math.PI);
+            int backFace = Mod((int)Math.Floor((angle + 45) / 90) + 1, 4);
 
-            bool[] lastSectors = new bool[2];
-            sectors.CopyTo(lastSectors, 0);
-
-            SetSectors();
-
-            if ((lastSectors[0] == sectors[0] && lastSectors[1] == sectors[1])||files.Length==0)
+            if (backFace == _backFace)
                 return;
-            
 
+            // the difference of the previous and current face ids: 1 if the player moved CCW, -1 if the player moved CW
+            int difference = 2 - Mod(backFace - _backFace, 4);
 
-            int faceId;
+            // update the texture index of the visible face
+            _index = Mod(_index + difference, files.Length);
 
-            if (lastSectors[0] == sectors[0])
-            {
-                if (!sectors[0])
-                {
-                    index += sectors[1] ? +1 : -1;
-                    Console.WriteLine("Changing right");
-                    Console.WriteLine(index);
-                    faceId = 1;
-                }
-                else
-                {
-                    index += sectors[1] ? -1 : +1;
-                    Console.WriteLine("Changing left");
-                    Console.WriteLine(index);
-                    faceId = 3;
-                }
-            }
-            else
-            {
-                if (sectors[1])
-                {
-                    index += sectors[0] ? +1 : -1;
-                    Console.WriteLine("Changing back");
-                    Console.WriteLine(index);
-                    faceId=2;
-                }else
-                {
-                    index += sectors[0] ? -1 : +1;
-                    Console.WriteLine("Changing front");
-                    Console.WriteLine(index);
-                    faceId = 0;
-                }
-            }
-            index = index < 0 ? files.Length-1 : index;
-            index %= files.Length;
-            Console.WriteLine(index);
-            // for (int i = 0; i < RenderObjs.Count; i++)
-            // {
-            //     RenderObjs[i].ChangeTexture(files[(index + i) % files.Length]);
-            // }
-            RenderObjs[faceId].ChangeTexture(files[index]);
+            // change the texture of the previous back face to the currently visible texture +-1.
+            // this way we're always a step ahead of the player's movement, either way they go the texture will already be loaded
+            RenderObjs[_backFace].ChangeTexture(GetFile(_index + difference));
 
+            _backFace = backFace;
         }
 
 
-        void GetFiles()
+        string[] GetFiles()
         {
-            if (!ImageSourcePath.EndsWith(".png"))
-                files = Directory.GetFiles(ImageSourcePath, "*.png", SearchOption.AllDirectories).ToArray();
-            else
-                files = new string[] { ImageSourcePath };
+            if (ImageSourcePath.EndsWith(".png"))
+                return new string[] { ImageSourcePath };
+
+            return Directory.GetFiles(ImageSourcePath, "*.png", SearchOption.AllDirectories);
+        }
+
+        string? GetFile(int index)
+        {
+            if (files.Length == 0)
+                return null;
+
+            return files.ElementAtOrDefault(Mod(index, files.Length));
         }
 
         public void Render()
         {
         // Action textureChange = TextureChange;
         // Task.Run(textureChange);
-            TextureChange();
+            if (files.Length > 0)
+                TextureChange();
 
             foreach (IRenderObject renderObj in RenderObjs)
             {
@@ -184,5 +140,7 @@ namespace UnconvGalRW
                                 -1.0f,  1.0f,  1.0f,  0.0f, 0.0f,
                                 -1.0f,  1.0f, -1.0f,  0.0f, 1.0f };
 
+        // modulo operation that always returns a positive number
+        private static int Mod(int x, int m) => (x % m + m) % m;
     }
 }

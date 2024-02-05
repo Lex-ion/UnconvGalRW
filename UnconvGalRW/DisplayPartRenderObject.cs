@@ -22,7 +22,7 @@ namespace UnconvGalRW
         float[] _scl = new float[3];
 
 
-        public DisplayPartRenderObject(ref float[] parentPosition,ref float[] parentRotation,ref float[] parentScale,float[] vertices, string texturePath, Camera cam, Vector3 position, Vector3 rotation, Vector3 scale) : base(vertices, cam, position, rotation, scale)
+        public DisplayPartRenderObject(ref float[] parentPosition,ref float[] parentRotation,ref float[] parentScale,float[] vertices, string? texturePath, Camera cam, Vector3 position, Vector3 rotation, Vector3 scale) : base(vertices, cam, position, rotation, scale)
         {
             _pos =  parentPosition;
             _rot = parentRotation;
@@ -69,7 +69,7 @@ namespace UnconvGalRW
             GL.DrawArrays(PrimitiveType.Triangles, 0, _vertices.Length / 5);
         }
 
-        public void ChangeTexture(string texturePath)
+        public void ChangeTexture(string? texturePath)
         {
             Texture newTexture = Texture.CreteTemporaryFromFile(texturePath);
             GL.DeleteTexture(_texture.Handle);
