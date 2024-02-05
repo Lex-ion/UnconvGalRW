@@ -10,15 +10,10 @@ namespace UnconvGalRW
         List<DisplayPartRenderObject> RenderObjs = new();
 
         public float[] _vertices { get; set; }
-        public Vector3 _position { get { return new Vector3(_pos[0], _pos[1], _pos[2]); } set { value.Deconstruct(out _pos[0], out _pos[1], out _pos[2]); } }
-        public Vector3 _rotation { get { return new Vector3(_rot[0], _rot[1], _rot[2]); } set { value.Deconstruct(out _rot[0], out _rot[1], out _rot[2]); } }
-        public Vector3 _scale { get { return new Vector3(_scl[0], _scl[1], _scl[2]); } set { value.Deconstruct(out _scl[0], out _scl[1], out _scl[2]); } }
+        public Vector3 _position {get; set;}
+        public Vector3 _rotation {get; set; }
+        public Vector3 _scale {get; set; }
 
-        public Vector3 vec;
-
-        float[] _pos = new float[3];
-        float[] _rot = new float[3];
-        float[] _scl = new float[3];
 
         Camera Camera;
 
@@ -36,19 +31,21 @@ namespace UnconvGalRW
             _vertices = new float[0];
             _position = new Vector3();
             _rotation = new Vector3();
-            _scale = new Vector3();
+            _scale = Vector3.One;
+
+            
 
             files = GetFiles();
 
             Random r = new Random();
             files=files.OrderBy(d=>r.Next()).ToArray();
 
-            RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, frontVerts, GetFile(_index), camera, new Vector3(), new Vector3(), Vector3.One));
-            RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, rightVerts, GetFile(_index + 1), camera, new Vector3(), new Vector3(), Vector3.One));
-            RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, backVerts, null, camera, new Vector3(), new Vector3(), Vector3.One));
-            RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, leftVerts, GetFile(_index - 1), camera, new Vector3(), new Vector3(), Vector3.One));
-            RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, topVerts, 0, camera, new Vector3(), new Vector3(), Vector3.One));
-            RenderObjs.Add(new DisplayPartRenderObject(ref _pos, ref _rot, ref _scl, botVerts, 0, camera, new Vector3(), new Vector3(), Vector3.One));
+            RenderObjs.Add(new DisplayPartRenderObject(this, frontVerts, GetFile(_index), camera, new Vector3(), new Vector3(), Vector3.One));
+            RenderObjs.Add(new DisplayPartRenderObject(this, rightVerts, GetFile(_index + 1), camera, new Vector3(), new Vector3(), Vector3.One));
+            RenderObjs.Add(new DisplayPartRenderObject(this, backVerts, null, camera, new Vector3(), new Vector3(), Vector3.One));
+            RenderObjs.Add(new DisplayPartRenderObject(this, leftVerts, GetFile(_index - 1), camera, new Vector3(), new Vector3(), Vector3.One));
+            RenderObjs.Add(new DisplayPartRenderObject(this, topVerts, 0, camera, new Vector3(), new Vector3(), Vector3.One));
+            RenderObjs.Add(new DisplayPartRenderObject(this, botVerts, 0, camera, new Vector3(), new Vector3(), Vector3.One));
         }
 
         void TextureChange()
