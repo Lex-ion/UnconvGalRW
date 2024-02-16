@@ -65,7 +65,7 @@ namespace UnconvGalRW
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
             GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Length * sizeof(uint), _indices, BufferUsageHint.StreamDraw);
 
-            _shader = new("Data\\Shaders\\vertShader.vert", "Data\\Shaders\\fragShader.frag");
+            _shader = new("Data/Shaders/vertShader.vert", "Data/Shaders/fragShader.frag");
             _shader.Use();
 
             var vertexLocation = _shader.GetAttribLocation("aPosition");
@@ -75,8 +75,8 @@ namespace UnconvGalRW
             var texCoordLocation = _shader.GetAttribLocation("aTexCoord");
             GL.EnableVertexAttribArray(texCoordLocation);
             GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
-            if (TextureId < Directory.GetFiles("Data\\Textures").Length)
-                _texture = Texture.GetTexture(Directory.GetFiles("Data\\Textures")[TextureId]);
+            if (TextureId < Directory.GetFiles("Data/Textures").Length)
+                _texture = Texture.GetTexture(Directory.GetFiles("Data/Textures")[TextureId]);
             else
                 _texture = Texture.GenerateMissingTexture();
            

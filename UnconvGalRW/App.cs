@@ -32,8 +32,8 @@ namespace UnconvGalRW
         void ColdStartUp()
         {
             Directory.CreateDirectory("Data");
-            Directory.CreateDirectory("Data\\Textures");
-            Directory.CreateDirectory("Data\\Shaders");
+            Directory.CreateDirectory("Data/Textures");
+            Directory.CreateDirectory("Data/Shaders");
             ResourceManager MyResourceClass = new ResourceManager(typeof(Properties.Resources));
 
             ResourceSet? resourceSet = MyResourceClass.GetResourceSet(CultureInfo.CurrentUICulture, true, true);
@@ -47,7 +47,7 @@ namespace UnconvGalRW
 
                 if (resourceKey?.Contains("Shader")??false)
                 {
-                    File.WriteAllBytes($"Data\\Shaders/{resourceKey}.{resourceKey.Remove(4)}", (byte[])resource!);
+                    File.WriteAllBytes($"Data/Shaders/{resourceKey}.{resourceKey.Remove(4)}", (byte[])resource!);
                 }
 
             }
@@ -68,13 +68,13 @@ namespace UnconvGalRW
             {
                 if (!Directory.Exists("Data"))
                     return false;
-                if (!Directory.Exists("Data\\Textures"))
+                if (!Directory.Exists("Data/Textures"))
                     return false;
-                if (!Directory.Exists("Data\\Shaders"))
+                if (!Directory.Exists("Data/Shaders"))
                     return false;
-                if (!File.Exists("Data\\Shaders\\fragShader.frag"))
+                if (!File.Exists("Data/Shaders/fragShader.frag"))
                     return false; 
-                if (!File.Exists("Data\\Shaders\\vertShader.vert"))
+                if (!File.Exists("Data/Shaders/vertShader.vert"))
                     return false;
 
                 return true;

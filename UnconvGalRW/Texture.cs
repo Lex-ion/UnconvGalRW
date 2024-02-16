@@ -78,8 +78,8 @@ namespace UnconvGalRW
 
                 if (resourceKey!.Contains("NOTEXTURE"))
                 {
-                    File.WriteAllBytes($"Data\\Textures\\NOTEXTURE.png", (byte[])resource!);
-                    handle = CreateTexture("Data\\Textures\\NOTEXTURE.png");
+                    File.WriteAllBytes($"Data/Textures/NOTEXTURE.png", (byte[])resource!);
+                    handle = CreateTexture("Data/Textures/NOTEXTURE.png");
                     break;
                 }
 
